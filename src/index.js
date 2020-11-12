@@ -1,17 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react"
+import ReactDOM from "react-dom"
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import App from "./components/App"
+import "semantic-ui-css/semantic.min.css"
+import { Detector } from "react-detect-offline"
+import InternetConnectionError from "./components/InterConError"
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+require("dotenv").config()
+
+ReactDOM.render(<Detector render={({ online }) => (online ? <App /> : <InternetConnectionError />)} />, document.querySelector("#root"))
