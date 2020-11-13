@@ -12,7 +12,7 @@ const FirstStep = ({ handleNext, handleChange, values: { firstName, address1, ph
     <Box>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
-          <TextField required id="firstName" onChange={handleChange} value={firstName || ""} name="firstName" label="Name" fullWidth error={!!formErrors.firstName} helperText={formErrors.firstName} required />
+          <TextField required id="firstName" onChange={handleChange} value={firstName || ""} name="firstName" label="Name" fullWidth error={!!formErrors.firstName} helperText={formErrors.firstName} />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField fullWidth label="Phone number" name="phone" placeholder="i.e: xxx-xxx-xxxx" value={phone || ""} onChange={handleChange} error={!!formErrors.phone} helperText={formErrors.phone} required />
