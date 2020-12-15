@@ -15,6 +15,7 @@ import AdminDashboard from "../user/AdminDashboard"
 import ProductDetails from "./ProductDetails"
 import Cart from "./Cart"
 import Checkout from "./Checkout"
+
 const App = () => {
   return (
     <Router history={history}>

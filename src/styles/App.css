@@ -278,6 +278,16 @@ input:link {
   display: flex;
 }
 
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: linear-gradient(to right, #9be15d, #00e3ae) !important;
+  color: white;
+  text-align: center;
+}
+
 /* ********************************************************************************** */
 @media only screen and (max-width: 2560px) {
   .search_wrap {

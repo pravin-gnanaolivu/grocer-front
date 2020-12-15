@@ -1,4 +1,10 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Grocer is an ecommerce website built with MERN Stack.  [Demo](https://adoring-feynman-de5b0e.netlify.app).
+
+
+## Design 
+Inspired by Jonas schmedtmann.
+[coding heroes](https://codingheroes.io/)
+
 
 ## Available Scripts
 

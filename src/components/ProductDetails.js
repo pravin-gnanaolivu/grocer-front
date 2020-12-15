@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Layout from "./Layout"
 import { getProduct, getRelatedProducts } from "../apis/getProduct"
-import { Grid, Image, Divider, Accordion, Icon, Placeholder, Label } from "semantic-ui-react"
+import { Grid, Dimmer, Loader, Segment, Divider, Accordion, Icon, Placeholder, Label } from "semantic-ui-react"
 import { API } from "../config"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
@@ -43,6 +43,7 @@ const ProductDetails = props => {
   const [loading, setLoading] = useState(true)
   const [contentLoading, setContenLoading] = useState(true)
   const [buttonValue, setButtonValue] = useState("Add to cart")
+  const [dimmer, setDimmer] = useState(true)
 
   const getProductById = productId => {
     getProduct(productId).then(data => {
@@ -54,6 +55,7 @@ const ProductDetails = props => {
           if (data.error) {
             console.log(data)
           } else {
+            setDimmer(false)
             setRelatedProduct(data)
           }
         })
@@ -258,17 +260,21 @@ const ProductDetails = props => {
           <Toolbar />
           <Typography className={classes.subHeading}>Similar Products</Typography>
           <Divider />
-          <Grid doubling columns={4}>
-            {relatedProduct.map((product, i) => {
-              return (
-                <Grid.Column key={i}>
-                  <Link to={`/product/details/${product._id}`} style={{ textDecoration: "none" }}>
-                    <ProductCard product={product} />
-                  </Link>
-                </Grid.Column>
-              )
-            })}
-          </Grid>
+          {!dimmer ? (
+            <Grid doubling columns={4}>
+              {relatedProduct.map((product, i) => {
+                return (
+                  <Grid.Column key={i}>
+                    <Link to={`/product/details/${product._id}`} style={{ textDecoration: "none" }}>
+                      <ProductCard product={product} />
+                    </Link>
+                  </Grid.Column>
+                )
+              })}
+            </Grid>
+          ) : (
+            <Segment loading style={{ border: "none", height: "80vh" }} />
+          )}
         </section>
       </div>
     </Layout>

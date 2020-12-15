@@ -4,7 +4,6 @@ import Appbar from "./Appbar"
 const Layout = ({ children }) => (
   <div>
     <Appbar />
-
     <div>{children}</div>
   </div>
 )
