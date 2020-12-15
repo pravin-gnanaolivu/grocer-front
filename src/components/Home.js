@@ -18,6 +18,8 @@ import Checkboxes from "./Checkbox"
 import RadioButton from "./RadioButton"
 import { price } from "./Price"
 import { getFilteredProducts } from "../apis/getFilteredProducts"
+import { Dimmer, Loader } from "semantic-ui-react"
+
 import { Grid } from "semantic-ui-react"
 import SearchBar from "./Search"
 import Layout from "./Layout"
@@ -98,6 +100,7 @@ const Home = () => {
   const [skip, setSkip] = useState(0)
   const [filteredResults, setFilteredResults] = useState([])
   const [loading, setLoading] = useState(true)
+  const [dimmer, setDimmer] = useState(true)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -110,7 +113,7 @@ const Home = () => {
         setTimeout(() => {
           setCategories(data)
           setLoading(false)
-        }, 3000)
+        }, 2000)
       }
     })
 
@@ -145,7 +148,9 @@ const Home = () => {
           </List>
         </div>
       ) : (
-        <div>Loading...</div>
+        <Dimmer active inverted>
+          <Loader inverted>Loading</Loader>
+        </Dimmer>
       )}
     </div>
   )
@@ -155,6 +160,7 @@ const Home = () => {
       if (data.error) {
         setFilterError(data)
       } else {
+        setDimmer(false)
         setFilteredResults(data.data)
       }
     })
@@ -202,18 +208,23 @@ const Home = () => {
             <SearchBar />
           </div>
           <div style={{ marginBottom: "2rem" }} />
-
-          <Grid doubling columns={3}>
-            {filteredResults.map((product, i) => {
-              return (
-                <Grid.Column key={i}>
-                  <Link to={`/product/details/${product._id}`} style={{ textDecoration: "none" }}>
-                    <Card product={product} />
-                  </Link>
-                </Grid.Column>
-              )
-            })}
-          </Grid>
+          {!dimmer ? (
+            <Grid doubling columns={3}>
+              {filteredResults.map((product, i) => {
+                return (
+                  <Grid.Column key={i}>
+                    <Link to={`/product/details/${product._id}`} style={{ textDecoration: "none" }}>
+                      <Card product={product} />
+                    </Link>
+                  </Grid.Column>
+                )
+              })}
+            </Grid>
+          ) : (
+            <Dimmer active inverted>
+              <Loader inverted>Loading</Loader>
+            </Dimmer>
+          )}
         </main>
       </div>
     </Layout>
