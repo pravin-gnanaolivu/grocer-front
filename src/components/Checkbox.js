@@ -11,10 +11,10 @@ const GreenCheckbox = withStyles({
   root: {
     color: green[400],
     "&$checked": {
-      color: green[600]
-    }
-  }
-})(props => <Checkbox color="default" {...props} />)
+      color: green[600],
+    },
+  },
+})((props) => <Checkbox color="default" {...props} />)
 const Checkboxes = ({ categories, handleFilters }) => {
   const [checked, setChecked] = useState([])
 
@@ -31,11 +31,19 @@ const Checkboxes = ({ categories, handleFilters }) => {
     handleFilters(newCurrentId)
   }
 
-  return categories.map(category => {
+  return categories.map((category) => {
     return (
       <ListItem key={category._id}>
         <FormGroup>
-          <FormControlLabel control={<GreenCheckbox onChange={e => handleChange(e, category._id)} name={category.name} />} label={category.name} />
+          <FormControlLabel
+            control={
+              <GreenCheckbox
+                onChange={(e) => handleChange(e, category._id)}
+                name={category.name}
+              />
+            }
+            label={category.name}
+          />
         </FormGroup>
       </ListItem>
     )
