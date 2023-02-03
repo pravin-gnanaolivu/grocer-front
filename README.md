@@ -1,4 +1,4 @@
-Grocer is an ecommerce website built with MERN Stack.  [Demo](https://adoring-feynman-de5b0e.netlify.app).
+Grocer is an ecommerce website built with MERN Stack.  [Demo](https://grocer-front-tlvn.vercel.app/).
 
 
 ## Design 
