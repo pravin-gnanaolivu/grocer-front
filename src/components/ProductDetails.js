@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Layout from "./Layout"
-import { getProduct, getRelatedProducts } from "../apis/getProduct"
-import { Grid, Dimmer, Loader, Segment, Divider, Accordion, Icon, Placeholder, Label } from "semantic-ui-react"
-import { API } from "../config"
+import {
+  Grid,
+  Segment,
+  Divider,
+  Accordion,
+  Icon,
+  Placeholder,
+  Label,
+} from "semantic-ui-react"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import { makeStyles } from "@material-ui/core/styles"
 import Toolbar from "@material-ui/core/Toolbar"
@@ -10,115 +16,65 @@ import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import ProductCard from "./ProductCard"
 import { Link } from "react-router-dom"
-import { addItem } from "../helpers/cartHelpers"
+import { addItem } from "src/helpers/cartHelpers"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
-import history from "../history"
+import history from "src/history"
 import CardMedia from "@material-ui/core/CardMedia"
 
-import "../styles/App.css"
-import SearchBar from "./Search"
+import "src/styles/App.css"
+import SearchBar from "src/components/Search"
+import {
+  useProductImage,
+  useProductDetails,
+  useRelatedProducts,
+} from "src/hooks"
 
 const useStyles = makeStyles({
   unitStyle: {
     background: "white",
     padding: ".5rem",
-    border: "2px solid green"
+    border: "2px solid green",
   },
   media: {
-    paddingTop: "86.25%"
+    paddingTop: "86.25%",
   },
 
   Placeholder: {
     transform: "skew(-5deg, -5deg)",
     height: "40px",
-    marginBottom: "35px"
-  }
+    marginBottom: "35px",
+  },
 })
 
-const ProductDetails = props => {
+const ProductDetails = (props) => {
   const classes = useStyles()
-  const [product, setProduct] = useState({})
-  const [relatedProduct, setRelatedProduct] = useState([])
   const [activeIndex, setActiveIndex] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [contentLoading, setContenLoading] = useState(true)
-  const [buttonValue, setButtonValue] = useState("Add to cart")
-  const [dimmer, setDimmer] = useState(true)
 
-  const getProductById = productId => {
-    getProduct(productId).then(data => {
-      if (data.error) {
-        console.log(data)
-      } else {
-        setProduct(data)
-        getRelatedProducts(data._id).then(data => {
-          if (data.error) {
-            console.log(data)
-          } else {
-            setDimmer(false)
-            setRelatedProduct(data)
-          }
-        })
-      }
-    })
-  }
-
-  const loadImages = () => {
-    setLoading(true)
-    setContenLoading(true)
-    fetch(`${API}/product/image/${props.match.params.id}`, {
-      method: "GET"
-    }).then(response => {
-      if (response) {
-        console.log("image loading")
-        setLoading(false)
-      }
-    })
-  }
-
-  useEffect(() => {
-    loadImages()
-
-    if (loading) {
-      setTimeout(() => {
-        setContenLoading(false)
-      }, 3000)
-    }
-  }, [props])
-
-  useEffect(() => {
-    const productId = props.match.params.id
-    getProductById(productId)
-    setTimeout(() => {
-      setContenLoading(false)
-    }, 3000)
-  }, [props])
-
-  // useEffect(() => {
-  //   if (getCart().length > 0) {
-  //     getCart().map(product => {
-  //       if (product._id === props.match.params.id) {
-  //         setButtonValue("Go to cart")
-  //       }
-  //     })
-  //   }
-  // }, [props])
+  const productQuery = useProductDetails({ productId: props.match.params.id })
+  const imageQuery = useProductImage({ productId: props.match.params.id })
+  const relatedProductQuery = useRelatedProducts({
+    productId: productQuery.data?._id,
+  })
 
   const renderProductImage = () => {
-    if (!props.match.params.id) return <div>Loading...</div>
+    if (imageQuery.isLoading) return <div>Loading...</div>
     return (
       <div>
-        {loading ? (
+        {imageQuery.isFetching ? (
           <Placeholder fluid>
             <Placeholder.Image rectangular />
           </Placeholder>
         ) : (
           <div>
-            <Label as="a" color="red" ribbon="right" style={{ top: "48px", zIndex: "1" }}>
+            <Label
+              as="a"
+              color="red"
+              ribbon="right"
+              style={{ top: "48px", zIndex: "1" }}
+            >
               In Stock
             </Label>
-            <CardMedia className={classes.media} image={`${API}/product/image/${props.match.params.id}`} />
-            {/* <Image className="detailed_img" src={`${API}/product/image/${props.match.params.id}`} /> */}
+            <CardMedia className={classes.media} image={imageQuery.data} />
           </div>
         )}
       </div>
@@ -131,24 +87,23 @@ const ProductDetails = props => {
 
     setActiveIndex(newIndex)
   }
-  ////////////////////////////////
 
-  const addtocart = product => {
-    addItem(product, () => {
-      setButtonValue("Go to cart")
-    })
+  const addtocart = (product) => {
+    addItem(product, () => {})
   }
 
   const renderProductDetails = () => {
-    if (!product) return <div>Loading...</div>
+    if (productQuery.isLoading) return <div>Loading...</div>
     return (
       <div>
-        {contentLoading ? (
+        {productQuery.isFetching ? (
           <Placeholder className={classes.Placeholder}>
             <Placeholder.Header></Placeholder.Header>
           </Placeholder>
         ) : (
-          <Typography className="product_detail_title">{product.title}</Typography>
+          <Typography className="product_detail_title">
+            {productQuery.data?.title}
+          </Typography>
         )}
 
         <div style={{ marginBottom: "2rem" }}>
@@ -156,38 +111,34 @@ const ProductDetails = props => {
             <div style={{ display: "flex", alignItems: "center" }}>
               <Typography className="detailTextStyle">Product MRP:</Typography>
 
-              <Typography className="detailPrice">&nbsp;₹{product.price}</Typography>
+              <Typography className="detailPrice">
+                &nbsp;₹{productQuery.data?.price}
+              </Typography>
             </div>
             <span>(Inclusive of all taxes)</span>
           </div>
           <div style={{ marginBottom: "40px" }}>
             <Typography className={classes.textStyle}>Available in:</Typography>
-            <button className={classes.unitStyle}>{product.quantity} units</button>
+            <button className={classes.unitStyle}>
+              {productQuery.data?.quantity} units
+            </button>
           </div>
           <div>
-            {contentLoading ? (
+            {productQuery.isFetching ? (
               <Placeholder style={{ height: 60, width: 230 }}>
                 <Placeholder.Image />
               </Placeholder>
             ) : (
               <Link to="/cart" style={{ textDecoration: "none" }}>
-                <Button disabled={!product.price} className="cardBtn" onClick={() => addtocart(product)}>
-                  Add to cart
+                <Button
+                  disabled={!productQuery.data?.price}
+                  className="cardBtn"
+                  onClick={() => addtocart(productQuery.data)}
+                >
+                  'Add to cart'
                 </Button>
               </Link>
             )}
-
-            {/* {buttonValue === "Go to cart" ? (
-              <Link to="/cart" style={{ textDecoration: "none" }}>
-                <Button className="cardBtn" onClick={() => addtocart(product)}>
-                  {buttonValue}
-                </Button>
-              </Link>
-            ) : (
-              <Button className="cardBtn" disabled={contentLoading} onClick={() => addtocart(product)}>
-                {buttonValue}
-              </Button>
-            )} */}
           </div>
         </div>
 
@@ -196,12 +147,16 @@ const ProductDetails = props => {
         <div>
           <div>
             <Accordion>
-              <Accordion.Title active={activeIndex === 1} index={1} onClick={handleClick}>
+              <Accordion.Title
+                active={activeIndex === 1}
+                index={1}
+                onClick={handleClick}
+              >
                 <Icon name="dropdown" />
                 Product Desciption
               </Accordion.Title>
               <Accordion.Content active={activeIndex === 1}>
-                {contentLoading ? (
+                {productQuery.isFetching ? (
                   <Placeholder>
                     <Placeholder.Header>
                       <Placeholder.Line />
@@ -209,19 +164,23 @@ const ProductDetails = props => {
                     </Placeholder.Header>
                   </Placeholder>
                 ) : (
-                  <>{product.description}</>
+                  <>{productQuery.data?.description}</>
                 )}
               </Accordion.Content>
             </Accordion>
           </div>
           <div>
             <Accordion>
-              <Accordion.Title active={activeIndex === 2} index={2} onClick={handleClick}>
+              <Accordion.Title
+                active={activeIndex === 2}
+                index={2}
+                onClick={handleClick}
+              >
                 <Icon name="dropdown" />
                 Nutrient Values
               </Accordion.Title>
               <Accordion.Content active={activeIndex === 2}>
-                {contentLoading ? (
+                {productQuery.isFetching ? (
                   <Placeholder>
                     <Placeholder.Header>
                       <Placeholder.Line />
@@ -229,13 +188,11 @@ const ProductDetails = props => {
                     </Placeholder.Header>
                   </Placeholder>
                 ) : (
-                  <>{product.nutrientValues}</>
+                  <>{productQuery.data?.nutrientValues}</>
                 )}
               </Accordion.Content>
             </Accordion>
           </div>
-
-          {/* <div>{product.countryOfOrigin}</div> */}
         </div>
       </div>
     )
@@ -254,26 +211,34 @@ const ProductDetails = props => {
         </div>
         <Grid stackable columns={2}>
           <Grid.Column>{renderProductImage()}</Grid.Column>
-          <Grid.Column style={{ padding: "3rem" }}>{renderProductDetails()}</Grid.Column>
+          <Grid.Column style={{ padding: "3rem" }}>
+            {renderProductDetails()}
+          </Grid.Column>
         </Grid>
         <section>
           <Toolbar />
-          <Typography className={classes.subHeading}>Similar Products</Typography>
+          <Typography className={classes.subHeading}>
+            Similar Products
+          </Typography>
           <Divider />
-          {!dimmer ? (
+          {relatedProductQuery.fetchStatus === "idle" &&
+          relatedProductQuery.isLoading ? null : relatedProductQuery.isLoading ? (
+            <Segment loading style={{ border: "none", height: "80vh" }} />
+          ) : (
             <Grid doubling columns={4}>
-              {relatedProduct.map((product, i) => {
+              {relatedProductQuery.data.map((product, i) => {
                 return (
                   <Grid.Column key={i}>
-                    <Link to={`/product/details/${product._id}`} style={{ textDecoration: "none" }}>
+                    <Link
+                      to={`/product/details/${productQuery.data?._id}`}
+                      style={{ textDecoration: "none" }}
+                    >
                       <ProductCard product={product} />
                     </Link>
                   </Grid.Column>
                 )
               })}
             </Grid>
-          ) : (
-            <Segment loading style={{ border: "none", height: "80vh" }} />
           )}
         </section>
       </div>

@@ -2,24 +2,27 @@ import { API } from "../config"
 
 export const allProducts = () => {
   return fetch(`${API}/products`, {
-    method: "GET"
+    method: "GET",
   })
-    .then(response => {
+    .then((response) => {
       return response.json()
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err)
     })
 }
 
 export const productsListForSearch = () => {
   return fetch(`${API}/products/forSearch`, {
-    method: "GET"
+    method: "GET",
   })
-    .then(response => {
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Bad fetch request")
+      }
       return response.json()
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err)
     })
 }

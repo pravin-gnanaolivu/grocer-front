@@ -5,7 +5,11 @@ import Toolbar from "@material-ui/core/Toolbar"
 import CardContent from "@material-ui/core/CardContent"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
-import { ThemeProvider, makeStyles, createMuiTheme } from "@material-ui/core/styles"
+import {
+  ThemeProvider,
+  makeStyles,
+  createTheme,
+} from "@material-ui/core/styles"
 import { green } from "@material-ui/core/colors"
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator"
 import "../styles/App.css"
@@ -15,26 +19,26 @@ import MuiAlert from "@material-ui/lab/Alert"
 import history from ".././history"
 import Layout from "../components/Layout"
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
-    primary: green
-  }
+    primary: green,
+  },
 })
 
 const useStyles = makeStyles({
   root: {
     maxWidth: 600,
-    margin: "auto"
+    margin: "auto",
   },
   margin: {
     margin: theme.spacing(1),
-    width: "100%"
+    width: "100%",
   },
   card: {
     maxWidth: 800,
     margin: "auto",
     transition: "0.3s",
-    boxShadow: "none !important"
+    boxShadow: "none !important",
     // boxShadow: "0 8px 40px -12px rgb(114 226 115)",
     // "&:hover": {
     //   boxShadow: "0 16px 70px -12.125px rgb(114 226 115)"
@@ -42,14 +46,14 @@ const useStyles = makeStyles({
   },
   content: {
     textAlign: "left",
-    position: "relative"
+    position: "relative",
   },
 
   heading: {
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   subheading: {
-    lineHeight: 1.8
+    lineHeight: 1.8,
   },
 
   product_title: {
@@ -63,11 +67,11 @@ const useStyles = makeStyles({
     transform: "skew(-5deg, -5deg)",
     fontSize: "3rem",
     position: "relative",
-    width: "10rem"
+    width: "10rem",
   },
   actions: {
     justifyContent: "center",
-    padding: "1rem 1rem"
+    padding: "1rem 1rem",
   },
   button: {
     backgroundImage: "linear-gradient(to right, #9be15d, #00e3ae)",
@@ -78,12 +82,12 @@ const useStyles = makeStyles({
     fontFamily: "sans-serif",
     fontWeight: "600",
 
-    fontSize: "1.2rem"
+    fontSize: "1.2rem",
   },
   input: {
     width: "80%",
-    marginBottom: "3rem"
-  }
+    marginBottom: "3rem",
+  },
 })
 
 //`````````````````````````````````COMPONENT STARTS HERE```````````````````````````````
@@ -92,14 +96,14 @@ const Signup = () => {
 
   // ```````````````````   VALIDATION WITH REACT MATERIAL LIBRARY````````````````````````
   useEffect(() => {
-    ValidatorForm.addValidationRule("nameRule", value => {
+    ValidatorForm.addValidationRule("nameRule", (value) => {
       if (value.length > 6) {
         return true
       }
       return false
     })
 
-    ValidatorForm.addValidationRule("isPassword", value => {
+    ValidatorForm.addValidationRule("isPassword", (value) => {
       if (value.length > 5) {
         return true
       }
@@ -113,12 +117,12 @@ const Signup = () => {
     password: "",
     error: "",
     severity: "",
-    message: ""
+    message: "",
   })
 
   const [open, setOpen] = useState(false)
 
-  const handleChange = name => event => {
+  const handleChange = (name) => (event) => {
     setValues({ ...values, error: false, [name]: event.target.value })
   }
 
@@ -126,14 +130,21 @@ const Signup = () => {
 
   //`````````````````````````ON SUBMIT HANDLER ````````````````````````````````//
 
-  const onClickSubmit = event => {
+  const onClickSubmit = (event) => {
     event.preventDefault()
-    signup({ name, email, password }).then(data => {
+    signup({ name, email, password }).then((data) => {
       setOpen(true)
       if (data.error) {
         setValues({ ...values, severity: "error", message: data.error })
       } else {
-        setValues({ ...values, name: "", email: "", password: "", severity: "success", message: "Account Created 😍" })
+        setValues({
+          ...values,
+          name: "",
+          email: "",
+          password: "",
+          severity: "success",
+          message: "Account Created 😍",
+        })
         setTimeout(() => {
           history.push("/signin")
         }, 2000)
@@ -165,9 +176,43 @@ const Signup = () => {
     return (
       <ValidatorForm onSubmit={onClickSubmit} style={{ textAlign: "center" }}>
         <ThemeProvider theme={theme}>
-          <TextValidator className={classes.input} label="Name" onChange={handleChange("name")} name="name" value={name} validators={["required", "nameRule"]} errorMessages={["Name is required", "Name length should be greater than 6"]} />
-          <TextValidator className={classes.input} label="Email" onChange={handleChange("email")} name="email" value={email} validators={["required", "isEmail"]} errorMessages={["Email is required", "Email is not valid"]} />
-          <TextValidator className={classes.input} label="Password" type="password" onChange={handleChange("password")} name="password" value={password} validators={["required", "matchRegexp:^(?=.*\\d)[a-zA-Z\\d]{8,999}$"]} errorMessages={["Password is required", "Minimum 8 characters with atleast 1 number"]} />
+          <TextValidator
+            className={classes.input}
+            label="Name"
+            onChange={handleChange("name")}
+            name="name"
+            value={name}
+            validators={["required", "nameRule"]}
+            errorMessages={[
+              "Name is required",
+              "Name length should be greater than 6",
+            ]}
+          />
+          <TextValidator
+            className={classes.input}
+            label="Email"
+            onChange={handleChange("email")}
+            name="email"
+            value={email}
+            validators={["required", "isEmail"]}
+            errorMessages={["Email is required", "Email is not valid"]}
+          />
+          <TextValidator
+            className={classes.input}
+            label="Password"
+            type="password"
+            onChange={handleChange("password")}
+            name="password"
+            value={password}
+            validators={[
+              "required",
+              "matchRegexp:^(?=.*\\d)[a-zA-Z\\d]{8,999}$",
+            ]}
+            errorMessages={[
+              "Password is required",
+              "Minimum 8 characters with atleast 1 number",
+            ]}
+          />
         </ThemeProvider>
         <Button type="submit" class="cardBtn">
           Signup
@@ -183,7 +228,11 @@ const Signup = () => {
         <Toolbar />
         <Card className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography className={classes.product_title} variant={"h6"} gutterBottom>
+            <Typography
+              className={classes.product_title}
+              variant={"h6"}
+              gutterBottom
+            >
               Signup
             </Typography>
 

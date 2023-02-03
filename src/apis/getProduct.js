@@ -1,25 +1,36 @@
 import { API } from "../config"
 
-export const getProduct = productId => {
+export const getProduct = ({ queryKey }) => {
+  const [_, productId] = queryKey
   return fetch(`${API}/product/${productId}`, {
-    method: "GET"
+    method: "GET",
   })
-    .then(response => {
+    .then((response) => {
       return response.json()
     })
-    .catch(err => {
-      console.log(err)
+    .catch((err) => {
+      throw new Error(err)
     })
 }
 
-export const getRelatedProducts = productId => {
+export const getRelatedProducts = ({ queryKey }) => {
+  const [_, productId] = queryKey
   return fetch(`${API}/product/related/${productId}`, {
-    method: "GET"
+    method: "GET",
   })
-    .then(response => {
+    .then((response) => {
       return response.json()
     })
-    .catch(err => {
-      console.log(err)
+    .catch((err) => {
+      throw new Error(err)
     })
+}
+
+export const getProductImage = ({ queryKey }) => {
+  const [_, productId] = queryKey
+  return fetch(`${API}/product/image/${productId}`, {
+    method: "GET",
+  }).then((response) => {
+    return response.url
+  })
 }

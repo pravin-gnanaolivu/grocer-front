@@ -1,7 +1,7 @@
-import { API } from "../config";
+import { API } from "../config"
 
 export const getFilteredProducts = ({ queryKey }) => {
-  const [_, filters] = queryKey;
+  const [_, filters] = queryKey
   return fetch(`${API}/products/by/search`, {
     method: "POST",
     headers: {
@@ -11,9 +11,9 @@ export const getFilteredProducts = ({ queryKey }) => {
     body: JSON.stringify(filters),
   })
     .then((response) => {
-      return response.json();
+      return response.json()
     })
     .catch((err) => {
-      throw new Error("something went wrong", err);
-    });
-};
+      throw new Error("something went wrong", err)
+    })
+}

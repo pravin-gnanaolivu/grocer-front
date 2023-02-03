@@ -1,55 +1,68 @@
 import _ from "lodash"
-import React, { Component } from "react"
+import * as React from "react"
 import { Search, Grid } from "semantic-ui-react"
-import { productsListForSearch } from "../apis/allProducts"
-import "../styles/App.css"
-import { API } from "../config"
-import history from "../history"
+import { productsListForSearch } from "src/apis/allProducts"
+import "src/styles/App.css"
+import { API } from "src/config"
+import history from "src/history"
+import { useQuery } from "@tanstack/react-query"
+import { useProductImage } from "src/hooks"
 
-let source = []
-const initialState = { isLoading: false, results: [], value: "", id: "" }
+export const SearchBar = () => {
+  const [filteredProducts, setFilteredProducts] = React.useState({
+    loading: false,
+    results: [],
+    value: "",
+  })
 
-export default class SearchBar extends Component {
-  state = initialState
+  const productQuery = useQuery(
+    ["search", filteredProducts],
+    productsListForSearch
+  )
+  const imageQuery = useProductImage({ productId: productQuery.data?._id })
 
-  componentDidMount() {
-    productsListForSearch().then(response => {
-      if (!response) return <div>Loading...</div>
-      response.map(product => {
-        source.push({ ...product, image: `${API}/product/image/${product._id}`, description: _.truncate(product.description) })
-      })
-    })
-  }
-
-  handleResultSelect = (e, { result }) => {
-    this.setState({ value: result.title })
+  const handleResultSelect = (e, { result }) => {
     history.push(`/product/details/${result._id}`)
   }
 
-  handleSearchChange = (e, { value }) => {
-    this.setState({ isLoading: true, value })
+  const handleSearchChange = (e, { value }) => {
+    setFilteredProducts((state) => ({ ...state, isLoading: true, value }))
 
-    setTimeout(() => {
-      if (this.state.value.length < 1) return this.setState(initialState)
+    if (filteredProducts.value.length < 1) return
 
-      const re = new RegExp(_.escapeRegExp(this.state.value), "i")
-      const isMatch = result => re.test(result.title)
+    const re = new RegExp(_.escapeRegExp(filteredProducts.value), "i")
+    const isMatch = (result) => re.test(result.title)
 
-      this.setState({
-        isLoading: false,
-        results: _.filter(source, isMatch)
-      })
-    }, 300)
+    const alterFilteredProducts = productQuery.data.map((product) => ({
+      ...product,
+      description: _.truncate(product.description),
+      image: `${API}/product/image/${product._id}`,
+    }))
+
+    setFilteredProducts((state) => ({
+      ...state,
+      isLoading: false,
+      results: _.filter(alterFilteredProducts, isMatch),
+    }))
   }
 
-  render() {
-    const { isLoading, value, results, id } = this.state
-    return (
-      <Grid>
-        <Grid.Column width={6}>
-          <Search aligned="left" className="search_input" loading={isLoading} onResultSelect={this.handleResultSelect} onSearchChange={_.debounce(this.handleSearchChange, 100, { loading: true })} results={results} value={value} />
-        </Grid.Column>
-      </Grid>
-    )
-  }
+  const { isLoading, value, results } = filteredProducts
+
+  return (
+    <Grid>
+      <Grid.Column width={6}>
+        <Search
+          aligned="left"
+          className="search_input"
+          loading={isLoading}
+          onResultSelect={handleResultSelect}
+          onSearchChange={handleSearchChange}
+          results={results}
+          value={value}
+        />
+      </Grid.Column>
+    </Grid>
+  )
 }
+
+export default SearchBar

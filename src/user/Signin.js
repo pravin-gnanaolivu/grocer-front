@@ -5,7 +5,11 @@ import Toolbar from "@material-ui/core/Toolbar"
 import CardContent from "@material-ui/core/CardContent"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
-import { ThemeProvider, makeStyles, createMuiTheme } from "@material-ui/core/styles"
+import {
+  ThemeProvider,
+  makeStyles,
+  createTheme,
+} from "@material-ui/core/styles"
 import { green } from "@material-ui/core/colors"
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator"
 import "../styles/App.css"
@@ -17,40 +21,40 @@ import { CardActions } from "@material-ui/core"
 import { Link } from "react-router-dom"
 import Layout from "../components/Layout"
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
-    primary: green
-  }
+    primary: green,
+  },
 })
 
 const useStyles = makeStyles({
   root: {
     maxWidth: 600,
-    margin: "auto"
+    margin: "auto",
   },
   margin: {
     margin: theme.spacing(1),
-    width: "100%"
+    width: "100%",
   },
   card: {
     maxWidth: 800,
     margin: "auto",
     transition: "0.3s",
-    boxShadow: "none !important"
+    boxShadow: "none !important",
     // "&:hover": {
     //   boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)"
     // }
   },
   content: {
     textAlign: "left",
-    position: "relative"
+    position: "relative",
   },
 
   heading: {
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   subheading: {
-    lineHeight: 1.8
+    lineHeight: 1.8,
   },
 
   product_title: {
@@ -64,11 +68,11 @@ const useStyles = makeStyles({
     transform: "skew(-5deg, -5deg)",
     fontSize: "3rem",
     position: "relative",
-    width: "10rem"
+    width: "10rem",
   },
   actions: {
     justifyContent: "center",
-    padding: "1rem 1rem"
+    padding: "1rem 1rem",
   },
   button: {
     backgroundImage: "linear-gradient(to right, #9be15d, #00e3ae)  ",
@@ -79,7 +83,7 @@ const useStyles = makeStyles({
     fontFamily: "sans-serif",
     fontWeight: "600 ",
 
-    fontSize: "1.2rem "
+    fontSize: "1.2rem ",
   },
   link: {
     backgroundImage: "linear-gradient(to right, #9be15d, #00e3ae)",
@@ -92,14 +96,14 @@ const useStyles = makeStyles({
       backgroundImage: "linear-gradient(to right, #9be15d, #00e3ae)",
       WebkitBackgroundClip: "text",
       backgroundClip: "text",
-      color: "transparent"
-    }
+      color: "transparent",
+    },
   },
 
   input: {
     width: "80%",
-    marginBottom: "3rem"
-  }
+    marginBottom: "3rem",
+  },
 })
 
 //`````````````````````````````````COMPONENT STARTS HERE```````````````````````````````
@@ -113,12 +117,12 @@ const Signin = () => {
     password: "",
     error: "",
     severity: "",
-    message: ""
+    message: "",
   })
 
   const [open, setOpen] = useState(false)
 
-  const handleChange = name => event => {
+  const handleChange = (name) => (event) => {
     setValues({ ...values, error: false, [name]: event.target.value })
   }
 
@@ -126,15 +130,21 @@ const Signin = () => {
 
   //`````````````````````````ON SUBMIT HANDLER ````````````````````````````````//
 
-  const onClickSubmit = event => {
+  const onClickSubmit = (event) => {
     event.preventDefault()
-    signin({ email, password }).then(data => {
+    signin({ email, password }).then((data) => {
       setOpen(true)
       if (data.error) {
         setValues({ ...values, severity: "error", message: data.error })
       } else {
         authenticate(data, () => {
-          setValues({ ...values, email: "", password: "", severity: "success", message: "successfully signed 😍." })
+          setValues({
+            ...values,
+            email: "",
+            password: "",
+            severity: "success",
+            message: "successfully signed 😍.",
+          })
           setTimeout(() => {
             history.push("/")
           }, 2000)
@@ -165,8 +175,25 @@ const Signin = () => {
     return (
       <ValidatorForm onSubmit={onClickSubmit} style={{ textAlign: "center" }}>
         <ThemeProvider theme={theme}>
-          <TextValidator className={classes.input} label="Email" onChange={handleChange("email")} name="email" value={email} validators={["required", "isEmail"]} errorMessages={["Email is required", "Email is not valid"]} />
-          <TextValidator className={classes.input} label="Password" type="password" onChange={handleChange("password")} name="password" value={password} validators={["required"]} errorMessages={["Password is required"]} />
+          <TextValidator
+            className={classes.input}
+            label="Email"
+            onChange={handleChange("email")}
+            name="email"
+            value={email}
+            validators={["required", "isEmail"]}
+            errorMessages={["Email is required", "Email is not valid"]}
+          />
+          <TextValidator
+            className={classes.input}
+            label="Password"
+            type="password"
+            onChange={handleChange("password")}
+            name="password"
+            value={password}
+            validators={["required"]}
+            errorMessages={["Password is required"]}
+          />
         </ThemeProvider>
         <Button class="cardBtn" type="submit">
           Login
@@ -182,7 +209,11 @@ const Signin = () => {
         <Toolbar />
         <Card className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography className={classes.product_title} variant={"h6"} gutterBottom>
+            <Typography
+              className={classes.product_title}
+              variant={"h6"}
+              gutterBottom
+            >
               login
             </Typography>
 

@@ -1,5 +1,5 @@
 import React from "react"
-import ReactDOM from "react-dom/client"
+import ReactDOM from "react-dom"
 
 import App from "./components/App"
 import "semantic-ui-css/semantic.min.css"
@@ -8,13 +8,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 const client = new QueryClient()
 
-const root = ReactDOM.createRoot(document.querySelector("#root"))
+const rootSelector = document.querySelector("#root")
 
-root.render(
+ReactDOM.render(
   <QueryClientProvider client={client}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <App />
     <ReactQueryDevtools />
-  </QueryClientProvider>
+  </QueryClientProvider>,
+  rootSelector
 )
